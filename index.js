@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
+
 dotenv.config({ path: './.env' });
 const app = express();
 
@@ -17,6 +18,7 @@ const errorJSON = function (res, errCode, errMsg) {
         error: errMsg
     });
 };
+
 
 const sequelize = new Sequelize(
     process.env.MYSQL_DATABASE,
@@ -210,7 +212,7 @@ app.post(process.env.URL_BANDEJA_MSJ, (req, res) => {
 });
 
 
-app.use(function (req, res, next) {
+app.use(function (req, res) {
     errorJSON(res, 404, 'URL no encontrada');
 });
 
