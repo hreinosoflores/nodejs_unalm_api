@@ -20,13 +20,26 @@ const errorJSON = function (res, errCode, errMsg) {
 };
 
 
+
+const PORT = 40009;
+const MYSQL_DATABASE = 'unalm';
+const MYSQL_USER = 'root';
+const MYSQL_PASS = 'mysql';
+const MYSQL_HOST = 'localhost';
+const MYSQL_DIALECT = 'mysql';
+const TABLE_CURSOS = 'cursos';
+const URL_CURSOS = '/api/Cursos/';
+const TABLE_BANDEJA_MSJ = 'bandeja_mensajes';
+const URL_BANDEJA_MSJ = '/api/BandejaMensajes/';
+
+
 const sequelize = new Sequelize(
-    process.env.MYSQL_DATABASE,
-    process.env.MYSQL_USER,
-    process.env.MYSQL_PASS,
+    MYSQL_DATABASE,
+    MYSQL_USER,
+    MYSQL_PASS,
     {
-        host: process.env.MYSQL_HOST,
-        dialect: process.env.MYSQL_DIALECT,
+        host: MYSQL_HOST,
+        dialect: MYSQL_DIALECT,
         define: {
             timestamps: false
         }
@@ -34,13 +47,13 @@ const sequelize = new Sequelize(
 );
 
 sequelize.authenticate()
-    .then(() => console.log(`CONEXION EXITOSA A DB '${process.env.MYSQL_DATABASE}'`))
+    .then(() => console.log(`CONEXION EXITOSA A DB '${MYSQL_DATABASE}'`))
     .catch(error => console.log(`EL ERROR DE CONEXION ES: ${error}`));
 
 //------------CURSOS-------------------------------
 
 const cursosModel = sequelize.define(
-    process.env.TABLE_CURSOS,
+    TABLE_CURSOS,
     {
         id: { type: Sequelize.BIGINT, primaryKey: true, autoIncrement: true, },
         codigo: { type: Sequelize.STRING },
@@ -56,7 +69,7 @@ const cursosModel = sequelize.define(
 
 
 //Mostrar todos los cursos
-app.get(process.env.URL_CURSOS, (req, res) => {
+app.get(URL_CURSOS, (req, res) => {
     cursosModel.findAll(
         {
             attributes: [
@@ -77,7 +90,7 @@ app.get(process.env.URL_CURSOS, (req, res) => {
 });
 
 //Consultar curso por id
-app.get(`${process.env.URL_CURSOS}:id`, (req, res) => {
+app.get(`${URL_CURSOS}:id`, (req, res) => {
     cursosModel.findByPk(req.params.id,
         {
             attributes: [
@@ -98,7 +111,7 @@ app.get(`${process.env.URL_CURSOS}:id`, (req, res) => {
 });
 
 //Crear nuevo curso
-app.post(process.env.URL_CURSOS, (req, res) => {
+app.post(URL_CURSOS, (req, res) => {
     cursosModel.create({
         codigo: req.body.codigo,
         nombre: req.body.nombre,
@@ -115,7 +128,7 @@ app.post(process.env.URL_CURSOS, (req, res) => {
 });
 
 //Actualizar curso
-app.put(`${process.env.URL_CURSOS}:id`, (req, res) => {
+app.put(`${URL_CURSOS}:id`, (req, res) => {
     if (req.params.id == req.body.id) {
         cursosModel.update({
             codigo: req.body.codigo,
@@ -142,7 +155,7 @@ app.put(`${process.env.URL_CURSOS}:id`, (req, res) => {
 });
 
 //Borrar curso
-app.delete(`${process.env.URL_CURSOS}:id`, function (req, res) {
+app.delete(`${URL_CURSOS}:id`, function (req, res) {
     cursosModel.destroy({ where: { id: req.params.id } })
         .then(resultado => {
             if (resultado == 1) {
@@ -160,7 +173,7 @@ app.delete(`${process.env.URL_CURSOS}:id`, function (req, res) {
 //------------BANDEJA DE ENTRADA MENSAJES-------------------------------
 
 const mensajesModel = sequelize.define(
-    process.env.TABLE_BANDEJA_MSJ,
+    TABLE_BANDEJA_MSJ,
     {
         id: { type: Sequelize.BIGINT, primaryKey: true, autoIncrement: true, },
         nombres: { type: Sequelize.STRING },
@@ -175,7 +188,7 @@ const mensajesModel = sequelize.define(
 
 
 //Mostrar todos los mensajes
-app.get(process.env.URL_BANDEJA_MSJ, (req, res) => {
+app.get(URL_BANDEJA_MSJ, (req, res) => {
     mensajesModel.findAll(
         {
             attributes: [
@@ -196,7 +209,7 @@ app.get(process.env.URL_BANDEJA_MSJ, (req, res) => {
 });
 
 //Crear nuevo mensaje
-app.post(process.env.URL_BANDEJA_MSJ, (req, res) => {
+app.post(URL_BANDEJA_MSJ, (req, res) => {
     mensajesModel.create({
         nombres: req.body.nombres,
         apellidos: req.body.apellidos,
@@ -216,7 +229,7 @@ app.use(function (req, res) {
     errorJSON(res, 404, 'URL no encontrada');
 });
 
-const puerto = process.env.PORT || 40009;
+const puerto = PORT || 40009;
 app.listen(puerto, () => {
     console.log(`SERVER UP ON PORT ${puerto}!!`);
 });
